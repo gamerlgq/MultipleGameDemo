@@ -1,5 +1,5 @@
 
-import { _decorator, Node, sp, log, Vec3, Component } from 'cc';
+import { _decorator, Node, sp, log, Vec3, Component, CCInteger, CCFloat, UITransform } from 'cc';
 import { FightConstant } from '../fight/define/FightConstant';
 // import { Message } from '../../../../framework/listener/Message';
 // import { ComponentBase } from '../../../../framework/ui/ComponentBase';
@@ -20,7 +20,13 @@ export class SpineComponentBase extends Component {
     effectBackNode = null;
 
     @property(Node)
-    nodeBloodUI = null
+    nodeBloodUI = null;
+
+    @property(Node)
+    nodeSkillPos = null;
+
+    @property(CCInteger)
+    id:number = 0;
 
     private _spine:sp.Skeleton = null;
 
@@ -36,7 +42,15 @@ export class SpineComponentBase extends Component {
 
     private _animiateEventCallback: FightConstant.interfaces.SpineFrameEventCallFunc = null;
 
+    private _skillCallback:Function = null;
+
     private _mixTime = 0.1; //动作融合时间
+
+
+    public get skeleton() : sp.Skeleton {
+        return this._spine;
+    }
+    
 
     onLoad () {
         this._init();
@@ -112,6 +126,7 @@ export class SpineComponentBase extends Component {
     private _onAnimateStartCallback(trackEntry: sp.spine.TrackEntry) {
         if (this._animateStartCallback) {
             this._animateStartCallback(trackEntry);
+            this._animateStartCallback = null;
         }
     }
 
@@ -119,6 +134,7 @@ export class SpineComponentBase extends Component {
     private _onAnimateEndCallback(trackEntry: sp.spine.TrackEntry) {
         if (this._animateEndCallback) {
             this._animateEndCallback(trackEntry);
+            this._animateEndCallback = null;
         }
     }
 
@@ -126,6 +142,7 @@ export class SpineComponentBase extends Component {
     private _onAnimateInterruptCallback(trackEntry: sp.spine.TrackEntry) {
         if (this._animiateInterruptCallback) {
             this._animiateInterruptCallback(trackEntry);
+            this._animiateInterruptCallback = null;
         }
     }
 
@@ -133,6 +150,7 @@ export class SpineComponentBase extends Component {
     private _onAnimateEventCallback(trackEntry: sp.spine.TrackEntry, event: sp.spine.Event) {
         if (this._animiateEventCallback) {
             this._animiateEventCallback(trackEntry, event);
+            this._animiateEventCallback = null;
         }
     }
 
@@ -203,7 +221,7 @@ export class SpineComponentBase extends Component {
     }
 
     /** 动画事件回调 */
-    public setAnimateEventCallback(callback) {
+    public setAnimateEventCallback(callback:FightConstant.interfaces.SpineFrameEventCallFunc) {
         this._animiateEventCallback = callback;
     }
 
@@ -288,5 +306,27 @@ export class SpineComponentBase extends Component {
             }
         }
         return result;
+    }
+
+    /**
+     * setSkillCallback
+     */
+    public setSkillCallback(callback:Function) {
+        this._skillCallback = callback;
+    }
+
+    // skill攻击帧回掉
+    onSkillCall(args:string){
+        if (this._skillCallback){
+            this._skillCallback(args);
+            this._skillCallback = null;
+        }
+    }
+
+    /**
+     * getSkillPos
+     */
+    public getSkillPos():Vec3 {
+        return this.nodeSkillPos.getComponent(UITransform).convertToWorldSpaceAR(Vec3.ZERO);
     }
 }

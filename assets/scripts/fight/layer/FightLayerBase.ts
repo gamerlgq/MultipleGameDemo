@@ -1,5 +1,5 @@
 import { Component, UITransform } from "cc";
-import { FightMainWorld } from "../../FightMainWrold";
+import { FightMainWorld } from "../../FightMainWorld";
 
 
 export class FightLayerBase extends Component {

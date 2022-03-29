@@ -8,7 +8,7 @@ export class Singleton{
         if (!this._instance){
             this._instance = new this();
         }
-        return this as unknown as T;
+        return this._instance as T;
     }
 
     static destoryInstance(){

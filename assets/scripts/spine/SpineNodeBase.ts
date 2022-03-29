@@ -10,36 +10,12 @@ import { _decorator,Node, Prefab, instantiate, Vec3, log, resources, error, Comp
 import { FightConstant } from '../fight/define/FightConstant';
 import { SpineComponentBase } from './SpineComponentBase';
 
-class PoolHandlerCom extends Component {
-
-    unuse():void{
-
-    };
-
-    reuse(n:Node):void{
-        log("reuse",n);
-    };
-} 
-
-
 const { ccclass } = _decorator;
 @ccclass
 export class SpineNodeBase extends Node {
-
-    // 阵型孔位
-    private _formationIndex:number;
-
     // 阵营
     private _camp:number;
-    
-    public set formationIndex(v : number) {
-        this._formationIndex = v;
-    }
-    
-    public get formationIndex() : number {
-        return this._formationIndex
-    }   
-    
+        
     public get camp() : number {
         return this._camp
     }
@@ -58,7 +34,6 @@ export class SpineNodeBase extends Node {
         super();
         this.addChild(spineNode);
         this._spineCom = this.getComponentInChildren(SpineComponentBase);
-        this.addComponent(PoolHandlerCom);
     }
 
     /**
@@ -82,7 +57,6 @@ export class SpineNodeBase extends Node {
     public addEffectBack(node:Node,offset?:Vec3){
         this._spineCom.addEffectBack(node,offset);
     }
-
 
     /**
      * addBloodUI
@@ -140,8 +114,22 @@ export class SpineNodeBase extends Node {
     }
 
     /** 动画事件回调 */
-    public setAnimateEventCallback(callback) {
+    public setAnimateEventCallback(callback:FightConstant.interfaces.SpineFrameEventCallFunc) {
         this._spineCom.setAnimateEventCallback(callback);
+    }
+
+    /**
+     * setSkillCallback
+     */
+    public setSkillCallback(callback:Function) {
+        this._spineCom.setSkillCallback(callback);
+    }
+
+    /**
+     * getSkillPos
+     */
+    public getSkillPos():Vec3 {
+        return this._spineCom.getSkillPos();
     }
 }
 

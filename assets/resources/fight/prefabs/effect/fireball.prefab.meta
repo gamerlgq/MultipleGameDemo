@@ -2,12 +2,12 @@
   "ver": "1.1.35",
   "importer": "prefab",
   "imported": true,
-  "uuid": "8d17ce2d-0aad-49b2-b478-d43b50f62855",
+  "uuid": "90a881c3-e07d-4f24-b844-6c1d28b237b4",
   "files": [
     ".json"
   ],
   "subMetas": {},
   "userData": {
-    "syncNodeName": "hero_2"
+    "syncNodeName": "fireball"
   }
 }

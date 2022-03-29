@@ -1,5 +1,6 @@
-import { error, Node, tween } from "cc";
-import { warn } from "console";
+import { error, log, Node,  tween, UITransform, Vec3 } from "cc";
+import { BulletFactory } from "../effect/BulletFactory";
+import { EffectBase } from "../effect/EffectBase";
 import { FightLayerBase } from "./FightLayerBase";
 
 export class TopEffectLayer extends FightLayerBase {
@@ -24,5 +25,27 @@ export class TopEffectLayer extends FightLayerBase {
 
     public pushActionNode(){
         this._isPlayerTween = false
+    }
+
+    public async play<T extends typeof EffectBase>(effectCtor:T,ownPos:Vec3,tarPos:Vec3,duration:number) {
+        let effect = await this._getEffect(effectCtor);
+        if (effect){
+            this.node.addChild(effect)
+            effect.position = this.node.getComponent(UITransform).convertToNodeSpaceAR(ownPos);
+            tween(effect).to(duration,{
+                position:this.node.getComponent(UITransform).convertToNodeSpaceAR(tarPos)
+            }).call(()=>{
+                BulletFactory.put(effect);
+            }).start();
+        }
+    }
+
+    private async _getEffect<T extends typeof EffectBase>(effectCtor:T):Promise<Node> {
+        let effect:Node = await BulletFactory.get(effectCtor);
+        return effect;
+    }
+
+    onDestroy(){
+        BulletFactory.clear();
     }
 }

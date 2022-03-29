@@ -1,9 +1,9 @@
 import { Component, error, log, Node, UITransform } from "cc";
 import { UIWidget } from "./fight/components/UIWidget";
 import { FightConstant } from "./fight/define/FightConstant";
-import { BloodLayer } from "./fight/layer/BloodLayer";
 import { RoleLayer } from "./fight/layer/RoleLayer";
 import { TopEffectLayer } from "./fight/layer/TopEffectLayer";
+
 export class FightMainWorld extends Node{
     
     // 层级管理
@@ -12,8 +12,6 @@ export class FightMainWorld extends Node{
     private _roleLayer:RoleLayer = null;
 
     private _topEffectLayer:TopEffectLayer = null;
-
-    private _bloodLayer:BloodLayer = null;
 
     /**
      * @description 初始化
@@ -29,7 +27,7 @@ export class FightMainWorld extends Node{
         this._layerMap.set(FightConstant.macro.FightLayer.BOTTM_EFFECT,this._createNode("BOTTM_EFFECT")); //底层特效层
         this._layerMap.set(FightConstant.macro.FightLayer.ROLE,this._createNode("ROLE")); //角色层
         this._layerMap.set(FightConstant.macro.FightLayer.TOP_EFFECT,this._createNode("TOP_EFFECT")); //上层特效层
-        this._layerMap.set(FightConstant.macro.FightLayer.BLOOD,this._createNode("BLOOD")); //数字层
+        // this._layerMap.set(FightConstant.macro.FightLayer.BLOOD,this._createNode("BLOOD")); //数字层
         this._layerMap.set(FightConstant.macro.FightLayer.DIALOG,this._createNode("Dailog")); //对话层
     }
 
@@ -50,17 +48,12 @@ export class FightMainWorld extends Node{
         // 上册技能层
         this._topEffectLayer = this.addCommonentInLayer(FightConstant.macro.FightLayer.TOP_EFFECT, TopEffectLayer);
         this._topEffectLayer.init();
-
-        // 上册技能层
-        this._bloodLayer = this.addCommonentInLayer(FightConstant.macro.FightLayer.BLOOD,BloodLayer);
-        this._bloodLayer.init();
     }
 
     /**
      * game start
      */
     public startGame() {
-        this._formationLayer.startGame();
         this._roleLayer.startGame();
     }
 

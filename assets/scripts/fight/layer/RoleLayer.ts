@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-03-20 16:14:40
  * @Description: file content
  */
-import { Component, error, js, Node, NodePool, v3, Vec3 } from "cc";
+import { error, js, log, UITransform, Vec3 } from "cc";
 import { RoleSpineFactory } from "../../spine/RoleSpineFactory";
 import { HeroSpineNode, MonsterSpineNode } from "../../spine/SpineNodeBase";
 import { FightConstant } from "../define/FightConstant";
@@ -13,109 +13,94 @@ import { FightEvent } from "../event/FightEvent";
 import { fightEventMgr } from "../event/FightEventMgr";
 import { FightLayerBase } from "./FightLayerBase";
 
+
 export class RoleLayer extends FightLayerBase {
   
-    private _heroPool:NodePool = null;
+    private _heroPool:Array<HeroSpineNode> = null;
+    private _monsterPool:Array<MonsterSpineNode> = null;
 
     public init() {
-        this._initListeners();
-        this._heroPool = new NodePool();
+        // this._initListeners();
+        this._heroPool = new Array<HeroSpineNode>();
+        this._monsterPool = new Array<MonsterSpineNode>();
     }
 
-    private _initListeners() {
-        fightEventMgr.addEventListener(FightConstant.macro.FightEvent.Game_Broadcast,this.onCreateRole.bind(this));
-    }
+    // private _initListeners() {
+    //     fightEventMgr.addEventListener(FightConstant.macro.FightEvent.Game_Broadcast,this.onCreateRole.bind(this));
+    // }
 
-    private onCreateRole(event:FightEvent) {
-        const data = event.getEventData();
-    }
+    // private onCreateRole(event:FightEvent) {
+    //     const data = event.getEventData();
+    // }
 
 
-    public async createRole(heroId:number,){
-        if (! heroId){
+    public async createRole(heroId:number,pos:Vec3){
+        if (!heroId){
             return error(js.formatStr("RoleLayer:createRole heroId undefined!"));
         }
-        let node = await RoleSpineFactory.create(HeroSpineNode,heroId);
-    }
 
-    private async _loadAttackers(attackers:Array<FightFormationData>) {
-        for (let index = 0; index < attackers.length; index++) {
-            let attackInfo = attackers[index];
-            let heroId = attackInfo.getHeroId();
-            if (heroId == -1){
-                return error(js.formatStr("RoleLayer:_loadAttackers heroId = -1 index:[%d]",index));
-            }
-      
-            let node = await RoleSpineFactory.create(HeroSpineNode,heroId);
-            this.node.addChild(node);
-            this._setPosition(node,index,FightConstant.FightUnitType.Attack);
-            this._attackRoleList.push(node);
-            node.addBloodUI();
-            node.setSiblingIndex(-1);
-            node.formationIndex = index;
-            node.camp = FightConstant.FightUnitType.Attack;
+        let n:MonsterSpineNode|HeroSpineNode  = null
+
+        if (heroId > 1) {
+            n = await RoleSpineFactory.create(MonsterSpineNode,heroId);
+            n.camp = FightConstant.macro.Camp.Defender;
+            this._monsterPool.push(n);
+        }else{
+            n = await RoleSpineFactory.create(HeroSpineNode,heroId);
+            n.camp = FightConstant.macro.Camp.Attacker;
+            this._heroPool.push(n);
         }
-    }
 
-    private async _loadDefenders(defenders:Array<FightFormationData>){
-        for (let index = 0; index < defenders.length; index++) {
-            let defenderInfo = defenders[index];
-            let heroId = defenderInfo.getHeroId();
-            if (heroId == -1){
-                return error(js.formatStr("RoleLayer:_loadDefenders heroId = -1 index:[%d]",index));
-            }
-
-            let node = await RoleSpineFactory.create(MonsterSpineNode,heroId);
-            this.node.addChild(node);
-            this._setPosition(node,index,FightConstant.FightUnitType.Defend);
-            this._defendRoleList.push(node);
-            node.setScale(v3(-1,1,1));
-            node.changeSkin("2");
-            node.addBloodUI();
-            node.setSiblingIndex(-1)
-            node.formationIndex = index;
-            node.camp = FightConstant.FightUnitType.Defend;
+        n.setScale(new Vec3(0.5,0.5,1));
+        this.node.addChild(n);
+        n.position = this.node.getComponent(UITransform).convertToNodeSpaceAR(pos);
+        if (heroId > 1) {
+            n.play(FightConstant.macro.HeroAnimate.front_idle,true);
+        }else{
+            n.play(FightConstant.macro.HeroAnimate.back_idle,true);
         }
-    }
-
-    private _setPosition(node:HeroSpineNode,idx:number,camp:number) {
-        let pos = this.getFomationPos(camp,idx);
-        node.position = pos;
     }
 
     public startGame(){
-        this._attackRoleList.forEach(element => {
-            element.play(FightConstant.macro.HeroAnimate.Idle,true);
-            element.changeEquip("2","dao2","dao2");
-        });
-
-        this._defendRoleList.forEach(element => {
-            element.play(FightConstant.macro.HeroAnimate.Idle,true);
-            element.changeEquip("2","dao2","dao2");
-        });
     }
 
     public updateView(data) {
         
-    }
+    } 
 
-    public getRoleAttacker(index:number):HeroSpineNode{
-        return this._attackRoleList[index];
-    }
-
-     public getRoleDefender(index:number):MonsterSpineNode {
-        return this._defendRoleList[index];
+    /**
+     * getHero
+     */
+    public getHero():HeroSpineNode {
+        let random = Math.random() * this._heroPool.length;
+        let idx = random - 1 ;
+        idx = Math.min(0,idx);
+        idx = Math.max(idx,this._heroPool.length-1);
+        return this._heroPool[idx];
     }
 
     /**
-     * 
-     * @param idx number 阵型索引
-     * @param camp number 所在阵营 
+     * getHeroByIndex
      */
-    public getFomationPos(camp:number,idx:number):Vec3{
-        let isAttacker:boolean = camp == FightConstant.FightUnitType.Attack;
-        let com = this._mainWorld.getCommonentInLayer(FightConstant.FightLayer.FORMATION,FomationLayer);
-        let pos = isAttacker? com.getAttackPosByIndex(idx) : com.getDefendPosByIndex(idx);
-        return pos.clone();
+    public getAllHero():Array<HeroSpineNode> {
+       return this._heroPool;
+    }
+
+    /**
+     * getHero
+     */
+    public getMonster():MonsterSpineNode {
+        let random = Math.random() * this._monsterPool.length;
+        let idx = random - 1 ;
+        idx = Math.min(0,idx);
+        idx = Math.max(idx,this._monsterPool.length-1);
+        return this._monsterPool[idx];
+    }
+    
+    /**
+     * getHeroByIndex
+     */
+    public getAllMonster():Array<MonsterSpineNode> {
+        return this._monsterPool;
     }
 }

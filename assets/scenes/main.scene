@@ -250,7 +250,7 @@
     "_shutter": 7,
     "_iso": 0,
     "_screenScale": 1,
-    "_visibility": 41943040,
+    "_visibility": 1115684864,
     "_targetTexture": null,
     "_id": "a7knsGtKFLZYw71fF3vJdx"
   },
@@ -294,8 +294,8 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 0.5,
-      "y": 0.5,
+      "x": 1,
+      "y": 1,
       "z": 1
     },
     "_layer": 1073741824,
@@ -340,8 +340,8 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 1,
-      "y": 1,
+      "x": 0.5,
+      "y": 0.5,
       "z": 1
     },
     "_layer": 33554432,
@@ -507,6 +507,9 @@
     },
     "_enabled": true,
     "__prefab": null,
+    "content": {
+      "__id__": 11
+    },
     "_id": "1eXD4SS8hGt6B/BDXnFt2R"
   },
   {

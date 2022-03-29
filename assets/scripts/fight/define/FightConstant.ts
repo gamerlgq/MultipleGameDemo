@@ -1,15 +1,21 @@
-import { sp } from "cc";
+import { sp, Vec3 } from "cc";
+import { SpineNodeBase } from "../../spine/SpineNodeBase";
 
 export namespace FightConstant {
     export namespace macro {
+        export enum Camp {
+            Attacker,
+            Defender
+        }
+
         export enum HeroAnimate {
-            back_attack = "back_attack",
+            back_attack = "back_atk",
             back_die = "back_die",
             back_hit = "back_hit",
             back_idle = "back_idle",
             back_move = "back_move",
-            back_skill = "back_attack",
-            front_attack = "front_attack",
+            back_skill = "back_skill",
+            front_attack = "front_atk",
             front_die = "front_die",
             front_hit = "front_hit",
             front_idle = "front_idle",
@@ -30,17 +36,21 @@ export namespace FightConstant {
             BOTTM_EFFECT,
             ROLE,
             TOP_EFFECT,
-            BLOOD,
             DIALOG
         }
 
         export enum FightConmand{
+            Create,
             Attack,
             Die,
             Hit,
             Idle,
             Move,
             Skill
+        }
+
+        export enum FightEffect{
+            FireBall
         }
     }
     
@@ -69,6 +79,26 @@ export namespace FightConstant {
         export interface FightCmdData {
             Command:number,
             data:any
+        }
+
+        export interface ActionCreate {
+            Id:number;
+            Posititon:Vec3;
+        }
+
+        export interface ActionSpineAnimation {
+            Id:number;
+            Animation:string;
+            Mode:number;
+            IsLoop:boolean;
+        }
+
+        export interface ActionSkill<T extends SpineNodeBase> {
+            Id:number;
+            Duration:number;
+            Animation:string;
+            Own:T;
+            Tar:T;
         }
     }
 }

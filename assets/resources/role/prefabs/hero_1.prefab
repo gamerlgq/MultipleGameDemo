@@ -132,8 +132,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 252.1,
-      "height": 422.98
+      "width": 701.18,
+      "height": 646.52
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -168,21 +168,21 @@
       "b": 255,
       "a": 255
     },
-    "loop": true,
+    "loop": false,
     "_timeScale": 1,
     "_useTint": false,
-    "_preCacheMode": 0,
-    "_cacheMode": 0,
-    "_defaultCacheMode": 0,
+    "_preCacheMode": 1,
+    "_cacheMode": 1,
+    "_defaultCacheMode": 1,
     "_debugBones": false,
     "_debugSlots": false,
     "_skeletonData": {
-      "__uuid__": "0ccb6498-f4d2-4d42-b6a1-ad9025be66c2",
+      "__uuid__": "02eff4f3-9a79-469a-b803-3cf74bbe291e",
       "__expectedType__": "sp.SkeletonData"
     },
     "_premultipliedAlpha": true,
     "defaultSkin": "default",
-    "defaultAnimation": "front_die",
+    "defaultAnimation": "<None>",
     "_sockets": [],
     "_debugMesh": false,
     "_id": ""
@@ -497,6 +497,7 @@
     "nodeBloodUI": {
       "__id__": 8
     },
+    "id": 1,
     "_id": ""
   },
   {
